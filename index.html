@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0416">
+  <title>z'star · 深空宇宙探索</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238a2be2'/%3E%3Cstop offset='1' stop-color='%23ff2d95'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='%230a0416'/%3E%3Ccircle cx='32' cy='32' r='13' fill='url(%23g)'/%3E%3Cellipse cx='32' cy='32' rx='24' ry='8' fill='none' stroke='%234dd0ff' stroke-width='2.5' transform='rotate(-18 32 32)'/%3E%3Ccircle cx='50' cy='18' r='3' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="bg2d"></canvas>
+  <canvas id="scene3d"></canvas>
+  <canvas id="fx2d"></canvas>
+  <div id="labels"></div>
+
+  <!-- 着陆页 -->
+  <div id="landing">
+    <div class="landing-inner">
+      <div class="avatar" aria-hidden="true">
+        <svg viewBox="0 0 120 120" width="112" height="112">
+          <defs>
+            <linearGradient id="avP" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="var(--c1)"/>
+              <stop offset="0.55" stop-color="var(--c2)"/>
+              <stop offset="1" stop-color="var(--c3)"/>
+            </linearGradient>
+            <radialGradient id="avG" cx="0.35" cy="0.3" r="0.9">
+              <stop offset="0" stop-color="#fff" stop-opacity="0.9"/>
+              <stop offset="0.4" stop-color="#fff" stop-opacity="0.15"/>
+              <stop offset="1" stop-color="#000" stop-opacity="0.35"/>
+            </radialGradient>
+          </defs>
+          <circle cx="60" cy="60" r="56" fill="rgba(255,255,255,0.03)" stroke="url(#avP)" stroke-width="1.6"/>
+          <circle cx="60" cy="60" r="26" fill="url(#avP)"/>
+          <circle cx="60" cy="60" r="26" fill="url(#avG)"/>
+          <ellipse cx="60" cy="60" rx="46" ry="13" fill="none" stroke="url(#avP)" stroke-width="2.4" transform="rotate(-18 60 60)"/>
+          <circle cx="97" cy="42" r="4.6" fill="url(#avP)"/>
+          <path d="M22 24 l2.4 5.6 5.6 2.4 -5.6 2.4 -2.4 5.6 -2.4 -5.6 -5.6 -2.4 5.6 -2.4 z" fill="#fff" opacity="0.9"/>
+          <path d="M88 88 l1.6 3.8 3.8 1.6 -3.8 1.6 -1.6 3.8 -1.6 -3.8 -3.8 -1.6 3.8 -1.6 z" fill="var(--c3)" opacity="0.95"/>
+          <circle cx="30" cy="86" r="1.8" fill="#fff" opacity="0.7"/>
+          <circle cx="92" cy="24" r="1.4" fill="#fff" opacity="0.6"/>
+        </svg>
+      </div>
+      <h1 class="logo glow">z'star</h1>
+      <p class="tagline">深 空 宇 宙 探 索 · DEEP SPACE EXPLORER</p>
+      <div class="btn-row">
+        <button id="btnStart" class="btn primary">开始探索</button>
+        <button id="btnSettings" class="btn ghost">设置</button>
+      </div>
+      <div class="link-row">
+        <button class="link" id="btnAbout">关于</button>
+        <span class="dot">·</span>
+        <button class="link" id="btnDisclaimer">免责声明</button>
+      </div>
+    </div>
+    <footer class="foot">
+      © 2026 z'star · by xuran zhou · 内容采用 CC BY-NC 4.0 协议
+    </footer>
+  </div>
+
+  <!-- 探索 HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-top">
+      <div class="hud-brand">
+        <span class="hud-logo glow">z'star</span>
+        <div class="mode-switch">
+          <button id="btnSolar" class="mode-btn on" data-mode="solar">太阳系</button>
+          <button id="btnDeep" class="mode-btn" data-mode="deep">深空天体</button>
+        </div>
+      </div>
+      <div class="hud-actions">
+        <button id="btnMusicHud" class="icon-btn" title="背景音乐">♪</button>
+        <button id="btnInteractHud" class="icon-btn" title="行星交互中心">⚡</button>
+        <button id="btnAboutHud" class="icon-btn" title="关于">i</button>
+        <button id="btnDisclaimerHud" class="icon-btn" title="免责声明">§</button>
+        <button id="btnSettingsHud" class="icon-btn" title="设置">⚙</button>
+        <button id="btnHome" class="icon-btn" title="返回首页">⌂</button>
+      </div>
+    </div>
+
+    <!-- 深空分类 tab -->
+    <div id="deepCatBar" class="cat-bar hidden">
+      <button class="cat-btn on" data-cat="all">全部</button>
+    </div>
+
+    <div class="hud-bottom">
+      <div class="chip-bar" id="chipBar"></div>
+      <div class="time-bar">
+        <button id="btnPlay" class="icon-btn play" title="暂停 / 继续">⏸</button>
+        <button id="btnResetTime" class="icon-btn" title="重置时间">↺</button>
+        <input id="speedSlider" type="range" min="0" max="100" value="33" step="0.5">
+        <span id="speedLabel" class="speed-label">2.0 天 / 秒</span>
+        <span id="simDate" class="sim-date">2026 年 1 月 1 日</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 信息面板 -->
+  <aside id="infoPanel">
+    <button id="btnInfoClose" class="icon-btn close">✕</button>
+    <div class="info-head">
+      <h2 id="infoName" class="glow">地球</h2>
+      <p id="infoEn" class="info-en">Earth</p>
+      <span id="infoType" class="type-badge">类地行星</span>
+    </div>
+    <div id="infoData" class="info-data"></div>
+    <p id="infoDesc" class="info-desc"></p>
+    <div id="infoActions" class="info-actions"></div>
+  </aside>
+
+  <!-- 设置面板 -->
+  <aside id="settingsPanel">
+    <div class="panel-head">
+      <h2 class="glow">设置</h2>
+      <button id="btnCloseSettings" class="icon-btn close">✕</button>
+    </div>
+    <div class="panel-body">
+      <section class="set-group">
+        <h3>声音</h3>
+        <label class="set-row">
+          <span>背景音乐</span>
+          <input type="checkbox" id="musicToggle" class="switch">
+        </label>
+        <label class="set-row">
+          <span>音量</span>
+          <input type="range" id="musicVol" min="0" max="100" value="55" class="mini-range">
+        </label>
+        <label class="set-row">
+          <span>交互音效</span>
+          <input type="checkbox" id="sfxToggle" class="switch">
+        </label>
+      </section>
+      <section class="set-group">
+        <h3>背景风格</h3>
+        <div id="themeSwatches" class="swatches"></div>
+      </section>
+      <section class="set-group">
+        <h3>画质</h3>
+        <div id="qualitySeg" class="seg">
+          <button data-q="high">高</button>
+          <button data-q="mid">中</button>
+          <button data-q="low">低</button>
+        </div>
+      </section>
+      <section class="set-group">
+        <h3>显示</h3>
+        <label class="set-row">
+          <span>运行轨迹长度</span>
+          <span class="inline"><input type="range" id="trailSlider" min="0" max="400" value="120" step="10" class="mini-range"><em id="trailLabel">120 帧</em></span>
+        </label>
+        <label class="set-row">
+          <span>轨道线</span>
+          <input type="checkbox" id="orbitToggle" class="switch" checked>
+        </label>
+        <label class="set-row">
+          <span>天体标签</span>
+          <input type="checkbox" id="labelToggle" class="switch" checked>
+        </label>
+        <label class="set-row">
+          <span>小行星带 / 柯伊伯带</span>
+          <input type="checkbox" id="beltToggle" class="switch" checked>
+        </label>
+      </section>
+    </div>
+  </aside>
+
+  <!-- 行星交互中心（太阳温度 / 轨道缩放 / 衰老 / 重置） -->
+  <aside id="interactPanel">
+    <div class="panel-head">
+      <h2 class="glow">行星交互中心</h2>
+      <button id="btnCloseInteract" class="icon-btn close">✕</button>
+    </div>
+    <div class="panel-body">
+      <section class="set-group">
+        <h3>太阳状态</h3>
+        <label class="set-row block">
+          <span>太阳温度 <em id="sunTempLabel" class="em-on">5,500 K（主序）</em></span>
+          <input type="range" id="sunTempSlider" min="0" max="100000" value="5500" step="100">
+          <small class="hint">0 K 太阳熄灭 · 低温使远距行星先冻结 · 超高温水星金星先被烤化，地球成灼热温室</small>
+        </label>
+        <label class="set-row block">
+          <span>衰老加速 <em id="agingLabel" class="em-on">× 0</em></span>
+          <input type="range" id="agingSlider" min="0" max="100" value="0">
+          <small class="hint">直接拖到 100 一键跳到最终结局（白矮星 / 吞噬内行星）</small>
+        </label>
+        <div class="effect-stage" id="stageHint">当前阶段：主序星</div>
+      </section>
+      <section class="set-group">
+        <h3>轨道缩放</h3>
+        <label class="set-row block">
+          <span>所有行星/彗星/矮行星整体缩放 <em id="orbitLabel" class="em-on">× 1.00</em></span>
+          <input type="range" id="orbitSlider" min="40" max="240" value="100">
+          <small class="hint">拉近可以看得更清楚；拉开则显稀疏</small>
+        </label>
+      </section>
+      <section class="set-group">
+        <h3>蝴蝶效应</h3>
+        <button id="btnResetEffects" class="btn small ghost full">重置全部效果</button>
+        <small class="hint" style="display:block;margin-top:10px;line-height:1.8;">
+          🌡 温度降低 → 行星大气会变得稀薄（主序阶段）<br>
+          🔥 衰老到红巨星 → 水星、金星、地球将被吞噬<br>
+          🪐 轨道拉远 → 小行星带密度降低、外侧行星更稀疏<br>
+          ☀ 氦闪（阶段 3）→ 太阳光强瞬间暴增 + 闪烁脉冲
+        </small>
+      </section>
+    </div>
+  </aside>
+
+  <!-- 模态框 -->
+  <div class="modal-mask" id="aboutModal">
+    <div class="modal">
+      <div class="modal-head"><h2 class="glow">关于 z'star</h2><button class="icon-btn close modal-close">✕</button></div>
+      <div class="modal-body">
+        <p id="aboutIntro" class="about-intro"></p>
+        <ul id="aboutFeatures" class="about-feats"></ul>
+        <p id="aboutAuthor" class="about-author"></p>
+        <p id="aboutStack" class="about-stack"></p>
+      </div>
+    </div>
+  </div>
+  <div class="modal-mask" id="disclaimerModal">
+    <div class="modal">
+      <div class="modal-head"><h2 class="glow">免责声明与版权</h2><button class="icon-btn close modal-close">✕</button></div>
+      <div class="modal-body">
+        <ul id="disclaimerList" class="disclaimer-list"></ul>
+        <p class="copyright-line">© 2026 z'star · Design &amp; Code by xuran zhou<br>内容采用 <b>CC BY-NC 4.0</b>（署名-非商业性使用）协议授权</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 过场 / 加载 / 暂停 -->
+  <div id="loading"><div class="spinner"></div><p>正在生成宇宙…</p></div>
+  <div id="pauseOverlay">
+    <div class="pause-box">
+      <h3 class="glow">检测到设备性能不足</h3>
+      <p>渲染已暂停以保护流畅度，可降低画质后继续探索。</p>
+      <button id="btnResume" class="btn primary">继续探索</button>
+    </div>
+  </div>
+  <div id="fadeOverlay"></div>
+  <div id="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/background.js"></script>
+  <script src="js/scene.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
